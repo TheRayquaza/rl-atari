@@ -1,0 +1,17 @@
+defaults:
+    - agent: qlearning
+    - environment: pong
+    - training: default
+    - evaluation: default
+    - _self_
+
+# Experiment settings
+experiment:
+    name: "rl_experiment"
+    seed: 42
+    output_dir: "outputs"
+
+# Hydra settings
+hydra:
+    run:
+        dir: ${experiment.output_dir}/${experiment.name}/${now:%Y-%m-%d_%H-%M-%S}

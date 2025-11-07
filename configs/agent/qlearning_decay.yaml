@@ -1,0 +1,7 @@
+---
+type: qlearning_eps_scheduling
+learning_rate: 0.1
+epsilon: 0.1
+gamma: 0.99
+epsilon_min: 0.01
+epsilon_decay: 0.995

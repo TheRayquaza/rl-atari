@@ -1,0 +1,11 @@
+numpy
+torch
+gymnasium[atari]
+ale-py
+autorom[accept-rom-license]
+tqdm
+pandas
+matplotlib
+seaborn
+ruff
+mypy

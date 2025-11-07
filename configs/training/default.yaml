@@ -1,0 +1,6 @@
+# configs/training/default.yaml
+enabled: true
+episodes: 2000
+max_steps_per_episode: 10000
+log_frequency: 100
+checkpoint_frequency: 500
