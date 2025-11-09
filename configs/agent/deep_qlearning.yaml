@@ -1,0 +1,5 @@
+---
+type: deep_qlearning
+learning_rate: 0.1
+epsilon: 0.3
+gamma: 0.9

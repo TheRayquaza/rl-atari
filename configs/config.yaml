@@ -1,5 +1,5 @@
 defaults:
-  - agent: qlearning
+  - agent: deep_qlearning_replay
   - env: default
   - training: default
   - evaluation: default

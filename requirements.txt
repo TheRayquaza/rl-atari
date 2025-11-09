@@ -9,3 +9,5 @@ matplotlib
 seaborn
 ruff
 mypy
+types-tqdm
+types-seaborn

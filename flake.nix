@@ -18,7 +18,7 @@
         };
       in {
         devShells.default = let
-          python = pkgs.python313;
+          python = pkgs.python312;
         in
           (pkgs.buildFHSEnv {
             name = "simple-python-fhs";

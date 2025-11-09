@@ -1,25 +1,27 @@
 from abc import ABC, abstractmethod
 import numpy as np
 import torch
+from logging import getLogger
 
 import torch.nn as nn
 import typing as t
 
-Action = int
-State = int
+Action = int # discrete action space
+State = np.ndarray # 3D state (210, 160, 3)
 Info = t.TypedDict("Info", {"prob": float, "action_mask": np.ndarray})
-QValues = t.DefaultDict[int, t.DefaultDict[Action, float]]
+QValues = torch.Tensor
 
 class AbstractAtariModel(ABC, nn.Module):
     """Abstract base class for Atari Q-learning models."""
-    
-    def __init__(self, input_shape, n_actions):
+
+    def __init__(self, input_shape, n_actions, **kwargs):
         super(AbstractAtariModel, self).__init__()
         self.input_shape = input_shape
         self.n_actions = n_actions
-    
+        self.logger = getLogger(self.__class__.__name__)
+
     @abstractmethod
-    def forward(self, x):
+    def forward(self, x: State) -> QValues:
         """Forward pass through the network.
         
         Args:
@@ -58,10 +60,12 @@ class AbstractAtariModel(ABC, nn.Module):
             state = state.unsqueeze(0)
         return state
     
+    @abstractmethod
     def save_model(self, filepath):
         """Save model parameters."""
-        torch.save(self.state_dict(), filepath)
+        pass
     
+    @abstractmethod
     def load_model(self, filepath):
         """Load model parameters."""
-        self.load_state_dict(torch.load(filepath))
+        pass
