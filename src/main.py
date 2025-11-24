@@ -16,7 +16,7 @@ def main(cfg: DictConfig):
     if cfg.training.enabled:
         trainer.train()
         trainer.create_plots()
-    
+
     if cfg.evaluation.enabled:
         trainer.evaluate()
     

@@ -1,5 +1,9 @@
 ---
+name: deep_qlearning_standard
 type: deep_qlearning
 learning_rate: 0.1
 epsilon: 0.3
 gamma: 0.9
+initialization: xavier_uniform
+loss: mse
+model: base

@@ -1,7 +1,7 @@
 enabled: true
-episodes: 20
+episodes: 400
 max_steps_per_episode: 250
 log_frequency: 100
-checkpoint_frequency: 500
+checkpoint_frequency: 250
 record_video: true
-video_frequency: 10
+video_frequency: 20

@@ -1,15 +1,28 @@
 defaults:
-  - agent: deep_qlearning_replay
+  - agent: deep_qlearning_very_low_decay_adam
   - env: default
+  - optimizer: default
   - training: default
   - evaluation: default
   - _self_
 
 experiment:
-  name: "rl_experiment"
   seed: 42
   output_dir: "outputs"
+  run_id: ${now:%Y-%m-%d_%H-%M-%S}
+  
+  paths:
+    root: ${experiment.output_dir}/${agent.name}
+    run: ${experiment.paths.root}/${experiment.run_id}
+    checkpoints: ${experiment.paths.run}/checkpoints
+    logs: ${experiment.paths.run}/logs
+    metrics: ${experiment.paths.run}/metrics
+    visualizations: ${experiment.paths.run}/visualizations
+    tensorboard: tensorboard/${agent.name}/${experiment.run_id}
 
 hydra:
   run:
-    dir: ${experiment.output_dir}/${experiment.name}/${now:%Y-%m-%d_%H-%M-%S}
+    dir: ${experiment.paths.run}
+  sweep:
+    dir: ${experiment.output_dir}/${agent.name}/sweeps
+    subdir: ${experiment.run_id}

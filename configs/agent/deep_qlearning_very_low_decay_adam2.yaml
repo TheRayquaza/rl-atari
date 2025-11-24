@@ -4,10 +4,11 @@ type: deep_qlearning_decay
 epsilon: 0.8
 epsilon_start: 0.8
 epsilon_end: 0.1
-epsilon_decay: 20000
-gamma: 0.95
+epsilon_decay: 80000
+gamma: 0.98
 initialization: xavier_uniform
-loss: mse
+loss: smooth_l1
 optimizer:
   optimizer: adam
-  learning_rate: 0.01
+  weigth_decay: 0.0001
+  learning_rate: 0.00025

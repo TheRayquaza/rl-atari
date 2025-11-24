@@ -1,13 +1,13 @@
 ---
-name: deep_qlearning_decay_very_low_decay
+name: deep_qlearning_decay_low_decay
 type: deep_qlearning_decay
-epsilon: 0.8
-epsilon_start: 0.8
+epsilon: 0.9
+epsilon_start: 0.9
 epsilon_end: 0.1
-epsilon_decay: 20000
+epsilon_decay: 70000
 gamma: 0.95
 initialization: xavier_uniform
 loss: mse
 optimizer:
-  optimizer: adam
+  optimizer: rmsprop
   learning_rate: 0.01

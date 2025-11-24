@@ -1,6 +1,0 @@
----
-type: deep_qlearning_decay_v2
-learning_rate: 0.01
-epsilon_start: 1
-epsilon_end: 0.1
-gamma: 0.95
