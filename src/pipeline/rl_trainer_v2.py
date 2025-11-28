@@ -9,7 +9,8 @@ import gymnasium as gym
 from gymnasium.wrappers import (
     RecordEpisodeStatistics,
     RecordVideo,
-    GrayscaleObservation,
+    AtariPreprocessing,
+    FrameStackObservation,
     NumpyToTorch,
 )
 import numpy as np
@@ -17,10 +18,10 @@ import pandas as pd
 from tqdm import tqdm
 import json
 import pickle
-from agent import DQNAgent, DQNDecayAgent
+from agent import DQNAgent, DQNDecayAgent, DQNStackingAgent
 
 
-class RLTrainer:
+class RLTrainerV2:
     """Handles training, evaluation, and logging of RL agents"""
 
     def __init__(self, cfg: DictConfig):
@@ -34,8 +35,7 @@ class RLTrainer:
         self.eval_video_dir = self.output_dir / "videos" / "evaluation"
         self.plot_dir = self.output_dir / "plots"
         self.tensorboard_dir = Path(cfg.experiment.paths.tensorboard)
-
-        self.device = torch.device("cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.log = logging.getLogger(__name__)
 
@@ -63,13 +63,16 @@ class RLTrainer:
         agent_classes: dict[str, type[DQNAgent]] = {
             "deep_qlearning": DQNAgent,
             "deep_qlearning_decay": DQNDecayAgent,
+            "deep_qlearning_stacking": DQNStackingAgent,
         }
 
         if agent_type not in agent_classes:
             raise ValueError(f"Unknown agent type: {agent_type}")
 
         agent_class = agent_classes[agent_type]
-        agent = agent_class(cfg=self.cfg, legal_actions=list(range(n_actions)))
+        agent = agent_class(
+            cfg=self.cfg, legal_actions=list(range(n_actions)), use_preprocessing=False
+        )  # Use atari preprocessor for raw states
 
         self.log.info(str(agent))
 
@@ -110,20 +113,32 @@ class RLTrainer:
             )
             env = RecordEpisodeStatistics(env, buffer_length=100)
 
-        env = GrayscaleObservation(env, keep_dim=True)
-        env = NumpyToTorch(env, device=self.device)
+        env = AtariPreprocessing(
+            env,
+            screen_size=80,
+            frame_skip=1,
+            grayscale_obs=True,
+            scale_obs=True,
+            terminal_on_life_loss=False,
+        )
+        env = FrameStackObservation(env, stack_size=self.cfg.env.stack_frames)
+        env = NumpyToTorch(env, device=torch.device("cpu"))
         return env
 
     def play_episode(self, env: gym.Env, train=True, max_steps=None):
         if max_steps is None:
             max_steps = self.cfg.training.max_steps_per_episode
 
-        device = self.agent.device
+        device = self.device
+
+        def to_tensor(x, dtype=torch.float32):
+            return torch.tensor(x, device=device, dtype=dtype)
 
         total_reward = 0.0
         steps = 0
 
-        state, _ = env.reset()
+        s, _ = env.reset()
+        state = to_tensor(s)
 
         for _ in range(max_steps):
             if train:
@@ -131,15 +146,17 @@ class RLTrainer:
             else:
                 a = self.agent.get_action(state, epsilon=0.0)
 
-            next_state, reward, done, truncated, _ = env.step(a)
+            next_s, r, done, truncated, _ = env.step(a)
 
+            next_state = to_tensor(next_s)
+            reward = to_tensor(r)
             is_done = done or truncated
-            done_tensor = torch.tensor([is_done], dtype=torch.uint8, device=device)
+            done_tensor = to_tensor(is_done, dtype=torch.uint8)
 
             if train:
                 self.agent.update(state, a, reward, next_state, done_tensor)
 
-            total_reward += float(reward)
+            total_reward += float(r)
             steps += 1
 
             state = next_state
@@ -151,7 +168,7 @@ class RLTrainer:
             self.agent.log_episode(total_reward, steps, self.agent.epsilon)
             if self.agent.episode_count % 25 == 0:
                 self.agent.log_grad_cam(state)
-                self.agent.log_input_state(state)
+                #self.agent.log_input_state(state)
             if (self.agent.step_count % 1000) == 0:
                 self.agent.log_network_stats()
 

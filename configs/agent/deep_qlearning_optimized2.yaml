@@ -3,7 +3,7 @@ type: deep_qlearning_decay
 epsilon: 1.0
 epsilon_start: 1.0
 epsilon_end: 0.05
-epsilon_decay: 200000
+epsilon_decay: 100000
 gamma: 0.99
 initialization: kaiming
 loss: smooth_l1
@@ -11,7 +11,7 @@ optimizer:
   optimizer: adam
   weight_decay: 0.0
   learning_rate: 0.0001
-batch_size: 128
-target_update_freq: 5000
+batch_size: 64
+target_update_freq: 1000
 buffer_size: 100000
-model: v2
+model: v1

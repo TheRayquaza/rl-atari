@@ -1,0 +1,17 @@
+name: deep_qlearning_stacking
+type: deep_qlearning_stacking
+epsilon: 1.0
+epsilon_start: 1.0
+epsilon_end: 0.05
+epsilon_decay: 250000
+gamma: 0.99
+initialization: kaiming
+loss: smooth_l1
+optimizer:
+  optimizer: adamW
+  weight_decay: 0.01
+  learning_rate: 0.00006
+batch_size: 64
+target_update_freq: 1000
+buffer_size: 50000 # Increased buffer size since stacking increases memory usage
+model: v3

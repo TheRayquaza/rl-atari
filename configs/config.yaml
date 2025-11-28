@@ -1,5 +1,5 @@
 defaults:
-  - agent: deep_qlearning_very_low_decay_adam
+  - agent: deep_qlearning
   - env: default
   - optimizer: default
   - training: default

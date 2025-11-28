@@ -1,9 +1,0 @@
-# config/agent/dqn.yaml
-type: "deep_qlearning"
-gamma: 0.99
-epsilon: 1.0
-initialization: "xavier_uniform"  # xavier_uniform, xavier_normal, kaiming, uniform, normal
-optimizer:
-  optimizer: "adam"
-  learning_rate: 0.0001
-loss: "mse"  # mse, huber

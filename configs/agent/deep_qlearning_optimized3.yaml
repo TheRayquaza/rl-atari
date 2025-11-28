@@ -1,0 +1,13 @@
+name: deep_qlearning_optimized3
+type: deep_qlearning_decay
+epsilon: 1.0
+epsilon_start: 1.0
+epsilon_end: 0.02
+epsilon_decay: 125000
+gamma: 0.99
+batch_size: 64
+target_update_freq: 2500
+buffer_size: 200000
+initialization: kaiming
+loss: smooth_l1
+model: v1
